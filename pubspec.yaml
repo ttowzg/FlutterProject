@@ -1,0 +1,17 @@
+dependencies:
+  flutter:
+    sdk: flutter
+  # Navegação (Padrão atual da comunidade)
+  go_router: ^14.0.0
+  # Gerenciamento de Estado (Escolha um: Riverpod é robusto, Provider é simples)
+  flutter_riverpod: ^2.5.0
+  # Requisições HTTP (Melhor que o 'http' nativo)
+  dio: ^5.4.0
+  # Datas (Para formatar "Segunda, 14:00")
+  intl: ^0.19.0
+  # Leitura de QR Code (Para o Check-in)
+  mobile_scanner: ^5.0.0
+  # Cache de Imagens (Fotos dos palestrantes offline)
+  cached_network_image: ^3.3.1
+  # Armazenamento Local (Para salvar a agenda offline)
+  shared_preferences: ^2.2.2
