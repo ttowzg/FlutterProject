@@ -44,8 +44,7 @@ Com base na Especificação de Requisitos, a aplicação entrega:
     ```
 
 4.  **Configurar Firebase**:
-    * Adicionar o ficheiro `google-services.json` na pasta `android/app/`.
-    * Adicionar o ficheiro `GoogleService-Info.plist` na pasta `ios/Runner/`.
+    * Adicionar o arquivo `google-services.json` na pasta `android/app/`.
 
 5.  **Executar a aplicação**:
     ```bash
