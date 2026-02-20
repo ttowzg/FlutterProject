@@ -35,7 +35,7 @@ Com base na Especificação de Requisitos, a aplicação entrega:
 
 2.  **Clonar o repositório**:
     ```bash
-    git clone [https://github.com/ttowzg/FlutterProject.git](https://github.com/ttowzg/FlutterProject.git)
+    git clone https://github.com/ttowzg/FlutterProject.git
     ```
 
 3.  **Instalar dependências**:
