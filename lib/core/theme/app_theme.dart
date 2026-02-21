@@ -9,8 +9,8 @@ class AppTheme {
         seedColor: AppColors.primaryVinho,
         primary: AppColors.primaryVinho,
         secondary: AppColors.secondaryCinza,
+        tertiary: AppColors.success, // Cor de sucesso para feedback positivo
         surface: AppColors.surface,
-        background: AppColors.background,
         error: AppColors.error,
       ),
       // Padroniza o estilo dos botões do app

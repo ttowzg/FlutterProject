@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'features/auth/data/auth_service.dart';
 import 'features/auth/presentation/pages/login_page.dart';
-import 'features/schedule/presentation/pages/home_page.dart';
+import 'features/main/presentation/pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Semana da Computação',
+      title: 'Semana da Computação - ICEA',
       theme: AppTheme.lightTheme,
       // O segredo está aqui: o StreamBuilder decide qual ecrã mostrar
       home: StreamBuilder<User?>(

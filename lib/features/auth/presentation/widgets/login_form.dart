@@ -16,6 +16,7 @@ class _LoginFormState extends State<LoginForm> {
   bool _isLoading = false;
 
   void _handleLogin() async {
+    final colorScheme = Theme.of(context).colorScheme;
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
@@ -32,16 +33,16 @@ class _LoginFormState extends State<LoginForm> {
 
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text("Login realizado com sucesso!"),
-            backgroundColor: Colors.green, // Feedback de sucesso
+            backgroundColor: colorScheme.tertiary,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Erro ao entrar. Verifique seu e-mail acadêmico e senha."),
-            backgroundColor: Colors.red, // Feedback de erro (Requisito 3.3.1)
+          SnackBar(
+            content: const Text("Erro ao entrar. Verifique seu e-mail acadêmico e senha."),
+            backgroundColor: colorScheme.error,
           ),
         );
       }
@@ -50,9 +51,6 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Acessa as cores do tema definidas no main.dart
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Form(
       key: _formKey,
       child: Column(

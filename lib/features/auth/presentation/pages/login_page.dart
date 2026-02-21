@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
               
               // Logo institucional do ICEA/UFOP (Requisito 3.12 / Padrões de Interface)
               Image.asset(
-                'assets/images/logo_icea.jfif', 
+                'assets/images/logo_icea.png', 
                 height: 120,
               ),
               

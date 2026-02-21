@@ -8,7 +8,8 @@ class AppColors {
   static const Color secondaryCinza = Color(0xFF5A595D);
 
   // Cores de apoio
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Colors.white;
+  static const Color success = Color(0xFF2E7D32); 
+  static const Color onSuccess = Colors.white;
+  static const Color surface = Color.fromARGB(255, 245, 245, 245);
   static const Color error = Color(0xFFB00020);
 }
