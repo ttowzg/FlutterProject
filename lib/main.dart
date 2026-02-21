@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'features/auth/data/auth_service.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/main/presentation/pages/home_page.dart';
+import 'features/schedule/presentation/pages/gestao_grade_view.dart';
+import 'features/speakers/presentation/pages/painel_perguntas_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

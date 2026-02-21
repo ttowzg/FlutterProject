@@ -6,6 +6,8 @@ import '../../../schedule/presentation/pages/programacao_view.dart';
 import '../../../profile/presentation/pages/profile_view.dart';
 import '../../../schedule/presentation/pages/agenda_view.dart';
 import '../../../checkin/presentation/pages/checkin_view.dart';
+import '../../../schedule/presentation/pages/gestao_grade_view.dart';
+import '../../../speakers/presentation/pages/painel_perguntas_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,9 +34,9 @@ class _HomePageState extends State<HomePage> {
         if (role == 'aluno') {
           views.addAll([const AgendaView(), const CheckInView()]);
         } else if (role == 'palestrante') {
-          views.add(const Center(child: Text("Painel de Perguntas")));
+          views.add(const PainelPerguntasView());
         } else if (role == 'organizador') {
-          views.add(const Center(child: Text("Gestão da Grade")));
+          views.add(const GestaoGradeView());
         }
         views.add(const ProfileView());
 

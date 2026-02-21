@@ -162,6 +162,9 @@ class DetalhesPalestraPage extends StatelessWidget {
                 label: const Text("ADICIONAR À MINHA AGENDA"),
               ),
             ),
+
+            // NOVA SEÇÃO: PERGUNTAS E RESPOSTAS
+            SecaoPerguntas(palestraId: palestra.id),
           ],
         ),
       ),
@@ -193,6 +196,158 @@ class DetalhesPalestraPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Widget para gerenciar a interação de Perguntas [cite: 132, 400-405]
+class SecaoPerguntas extends StatefulWidget {
+  final String palestraId;
+
+  const SecaoPerguntas({super.key, required this.palestraId});
+
+  @override
+  State<SecaoPerguntas> createState() => _SecaoPerguntasState();
+}
+
+class _SecaoPerguntasState extends State<SecaoPerguntas> {
+  final TextEditingController _controller = TextEditingController();
+  final String? _uid = FirebaseAuth.instance.currentUser?.uid;
+
+  Future<void> _enviarPergunta() async {
+    final texto = _controller.text.trim();
+    if (texto.isEmpty || _uid == null) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection('palestras')
+        .doc(widget.palestraId)
+        .collection('perguntas')
+        .add({
+      'texto': texto,
+      'autor': user?.displayName ?? "Estudante",
+      'uidAutor': _uid,
+      'horario': FieldValue.serverTimestamp(),
+    });
+
+    _controller.clear();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Pergunta enviada com sucesso!")),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('usuarios').doc(_uid).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox();
+        final role = snapshot.data?.get('role') ?? 'aluno';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Divider(height: 60),
+            Row(
+              children: [
+                Icon(Icons.question_answer, color: colorScheme.primary),
+                const SizedBox(width: 12),
+                Text(
+                  "Perguntas e Respostas",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Interface do ALUNO: Campo para perguntar
+            if (role == 'aluno') ...[
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: "Faça uma pergunta ao palestrante...",
+                  filled: true,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.send),
+                    color: colorScheme.primary,
+                    onPressed: _enviarPergunta,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 32),
+            ],
+
+            // Lista de Perguntas (Exibição Dinâmica)
+            Text(
+              role == 'palestrante' ? "Perguntas Recebidas" : "Minhas Perguntas",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('palestras')
+                  .doc(widget.palestraId)
+                  .collection('perguntas')
+                  .orderBy('horario', descending: true)
+                  .snapshots(),
+              builder: (context, qSnapshot) {
+                if (qSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: LinearProgressIndicator());
+                }
+
+                final perguntas = qSnapshot.data?.docs ?? [];
+                
+                // Filtra perguntas: Aluno só vê as suas, Palestrante vê todas
+                final listaFiltrada = perguntas.where((p) {
+                  if (role == 'palestrante') return true;
+                  return p['uidAutor'] == _uid;
+                }).toList();
+
+                if (listaFiltrada.isEmpty) {
+                  return Text(
+                    "Nenhuma pergunta enviada ainda.",
+                    style: TextStyle(color: colorScheme.outline, fontStyle: FontStyle.italic),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: listaFiltrada.length,
+                  itemBuilder: (context, index) {
+                    final p = listaFiltrada[index];
+                    return Card(
+                      elevation: 0,
+                      color: colorScheme.surfaceVariant.withOpacity(0.5),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        title: Text(p['texto']),
+                        subtitle: Text(
+                          "Por: ${p['autor']} • ${p['horario'] != null ? DateFormat('HH:mm').format((p['horario'] as Timestamp).toDate()) : ''}",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
