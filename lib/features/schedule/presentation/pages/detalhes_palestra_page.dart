@@ -31,40 +31,36 @@ class DetalhesPalestraPage extends StatelessWidget {
         return;
       }
 
-      // 2. Verifica Conflito de Horário (Requisito 3.1.3 - Cenário Alternativo)
-      final conflitos = await agendaRef
-          .where('horario', isEqualTo: palestra['horario'])
-          .get();
+      // 2. Verifica Conflito de Horário (Requisito 3.1.3 - Restrição de Horário Robusta)
+      // Buscamos toda a agenda para comparar horários de forma flexível (ignorando segundos)
+      final todasAsPalestras = await agendaRef.get();
+      final novaData = (palestra['horario'] as Timestamp).toDate();
 
-      if (conflitos.docs.isNotEmpty && context.mounted) {
-        final palestraConflitante = conflitos.docs.first;
-        final nomeConflito = palestraConflitante['titulo'];
+      for (var doc in todasAsPalestras.docs) {
+        final dataExistente = (doc['horario'] as Timestamp).toDate();
 
-        // Diálogo simplificado: Apenas Cancelar ou Substituir [cite: 642]
-        bool? substituir = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Conflito de Horário"),
-            content: Text(
-              "Você já salvou '$nomeConflito' para este horário. Deseja substituí-la por esta nova atividade?",
+        // Compara se o dia e o horário (hora/minuto) são idênticos
+        bool mesmoDiaEHorario = dataExistente.year == novaData.year &&
+            dataExistente.month == novaData.month &&
+            dataExistente.day == novaData.day &&
+            dataExistente.hour == novaData.hour &&
+            dataExistente.minute == novaData.minute;
+
+        if (mesmoDiaEHorario && context.mounted) {
+          final nomeConflito = doc['titulo'];
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Conflito de Horário: Você já possui '$nomeConflito' agendada para este mesmo horário.",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: colorScheme.error,
+              duration: const Duration(seconds: 4),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("MANTER ANTIGA"),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("SUBSTITUIR"),
-              ),
-            ],
-          ),
-        );
-
-        if (substituir != true) return;
-
-        // Se confirmou a substituição, removemos o registro conflitante
-        await agendaRef.doc(palestraConflitante.id).delete();
+          );
+          return; // Interrompe o cadastro
+        }
       }
 
       // 3. Gravação na Subcoleção 'agenda' [cite: 545, 721]
