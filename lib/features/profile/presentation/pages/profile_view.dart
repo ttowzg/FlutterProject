@@ -13,7 +13,10 @@ class ProfileView extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('usuarios').doc(user?.uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user?.uid)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -30,7 +33,6 @@ class ProfileView extends StatelessWidget {
                 child: Icon(Icons.person, size: 50),
               ),
               const SizedBox(height: 24),
-              // Exibe o Nome (Requisito US4) [cite: 352, 650]
               ListTile(
                 title: const Text("Nome"),
                 subtitle: Text(userData?['nome'] ?? "Não informado"),
@@ -41,14 +43,12 @@ class ProfileView extends StatelessWidget {
                 subtitle: Text(user?.email ?? "Não informado"),
                 leading: const Icon(Icons.email_outlined),
               ),
-              // Exibe o Papel (Role) para conferência [cite: 104-107]
               ListTile(
                 title: const Text("Tipo de Conta"),
                 subtitle: Text(userData?['role']?.toUpperCase() ?? "ALUNO"),
                 leading: const Icon(Icons.admin_panel_settings_outlined),
               ),
               const Spacer(),
-              // Botão de Logout para resolver o seu problema [cite: 461, 719]
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(

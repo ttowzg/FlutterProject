@@ -23,13 +23,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('usuarios').doc(_uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(_uid)
+          .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (!snapshot.hasData)
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
 
         final String role = snapshot.data?.get('role') ?? 'aluno';
 
-        // Lógica de telas baseada no papel [cite: 352, 460-462]
         final List<Widget> views = [const ProgramacaoView()];
         if (role == 'aluno') {
           views.addAll([const AgendaView(), const CheckInView()]);
@@ -43,12 +48,16 @@ class _HomePageState extends State<HomePage> {
         if (_indiceAtual >= views.length) _indiceAtual = 0;
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Semana da Computação"), centerTitle: true),
-          body: IndexedStack(index: _indiceAtual, children: views), // Responsividade < 1s [cite: 167, 442]
+          appBar: AppBar(
+            title: const Text("Semana da Computação"),
+            centerTitle: true,
+          ),
+          body: IndexedStack(index: _indiceAtual, children: views),
           bottomNavigationBar: NavBar(
             selectedIndex: _indiceAtual,
             role: role,
-            onDestinationSelected: (index) => setState(() => _indiceAtual = index),
+            onDestinationSelected: (index) =>
+                setState(() => _indiceAtual = index),
           ),
         );
       },

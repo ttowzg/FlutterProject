@@ -13,13 +13,11 @@ class AgendaView extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    // Se não houver usuário logado (Segurança do Requisito 5.1)
     if (user == null) {
       return const Center(child: Text("Faça login para ver sua agenda."));
     }
 
     return StreamBuilder<QuerySnapshot>(
-      // Buscamos apenas na subcoleção do usuário logado (Alta Performance) [cite: 169-170, 444]
       stream: FirebaseFirestore.instance
           .collection('usuarios')
           .doc(user.uid)
@@ -27,7 +25,7 @@ class AgendaView extends StatelessWidget {
           .orderBy('horario')
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError){
+        if (snapshot.hasError) {
           return const Center(child: Text("Erro ao carregar sua agenda."));
         }
 
@@ -35,7 +33,6 @@ class AgendaView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Caso a agenda esteja vazia (Requisito 3.1.3) [cite: 133, 636]
         if (snapshot.data!.docs.isEmpty) {
           return Center(
             child: Column(
@@ -89,7 +86,6 @@ class AgendaView extends StatelessWidget {
                 subtitle: Text(
                   "${item['local']} • ${DateFormat('dd/MM - HH:mm').format(dataHora)}h",
                 ),
-                // Botão para remover (Parte do "Gerenciar" no Requisito 3.1.3) [cite: 132, 635]
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () => _removerDaAgenda(context, user.uid, item.id),
@@ -102,7 +98,6 @@ class AgendaView extends StatelessWidget {
     );
   }
 
-  // Função para o usuário gerenciar a agenda excluindo itens [cite: 25, 132-133]
   Future<void> _removerDaAgenda(
     BuildContext context,
     String uid,

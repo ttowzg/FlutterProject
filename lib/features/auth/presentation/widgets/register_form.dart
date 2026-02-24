@@ -10,7 +10,7 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
-  final _nomeController = TextEditingController(); // Novo controlador
+  final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
@@ -21,11 +21,10 @@ class _RegisterFormState extends State<RegisterForm> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Agora passamos o nome para o método signUp
       final user = await _authService.signUp(
         _emailController.text.trim(),
         _passwordController.text.trim(),
-        _nomeController.text.trim(), // Enviando o nome
+        _nomeController.text.trim(),
       );
 
       if (!mounted) return;
@@ -33,12 +32,18 @@ class _RegisterFormState extends State<RegisterForm> {
 
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text("Conta criada com sucesso!"), backgroundColor: colorScheme.tertiary),
+          SnackBar(
+            content: const Text("Conta criada com sucesso!"),
+            backgroundColor: colorScheme.tertiary,
+          ),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text("Erro ao cadastrar. Tente novamente."), backgroundColor: colorScheme.error),
+          SnackBar(
+            content: const Text("Erro ao cadastrar. Tente novamente."),
+            backgroundColor: colorScheme.error,
+          ),
         );
       }
     }
@@ -50,7 +55,6 @@ class _RegisterFormState extends State<RegisterForm> {
       key: _formKey,
       child: Column(
         children: [
-          // NOVO: Campo de Nome Completo
           TextFormField(
             controller: _nomeController,
             decoration: const InputDecoration(
@@ -58,10 +62,11 @@ class _RegisterFormState extends State<RegisterForm> {
               prefixIcon: Icon(Icons.person_outline),
               border: OutlineInputBorder(),
             ),
-            validator: (value) => (value == null || value.isEmpty) ? "Insira seu nome" : null,
+            validator: (value) =>
+                (value == null || value.isEmpty) ? "Insira seu nome" : null,
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _emailController,
             decoration: const InputDecoration(
@@ -70,10 +75,12 @@ class _RegisterFormState extends State<RegisterForm> {
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.emailAddress,
-            validator: (value) => (value == null || !value.contains('@')) ? "E-mail inválido" : null,
+            validator: (value) => (value == null || !value.contains('@'))
+                ? "E-mail inválido"
+                : null,
           ),
           const SizedBox(height: 16),
-          
+
           TextFormField(
             controller: _passwordController,
             decoration: const InputDecoration(
@@ -82,7 +89,9 @@ class _RegisterFormState extends State<RegisterForm> {
               border: OutlineInputBorder(),
             ),
             obscureText: true,
-            validator: (value) => (value == null || value.length < 6) ? "Senha muito curta" : null,
+            validator: (value) => (value == null || value.length < 6)
+                ? "Senha muito curta"
+                : null,
           ),
           const SizedBox(height: 32),
 
@@ -91,9 +100,9 @@ class _RegisterFormState extends State<RegisterForm> {
             height: 50,
             child: ElevatedButton(
               onPressed: _isLoading ? null : _handleRegister,
-              child: _isLoading 
-                ? const CircularProgressIndicator(color: Colors.white) 
-                : const Text("CADASTRAR CONTA"),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text("CADASTRAR CONTA"),
             ),
           ),
         ],

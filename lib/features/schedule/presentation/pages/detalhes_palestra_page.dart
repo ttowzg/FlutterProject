@@ -8,7 +8,6 @@ class DetalhesPalestraPage extends StatelessWidget {
 
   const DetalhesPalestraPage({super.key, required this.palestra});
 
-  // Lógica para salvar na subcoleção e verificar conflitos
   Future<void> _gerenciarAgenda(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -20,7 +19,6 @@ class DetalhesPalestraPage extends StatelessWidget {
         .collection('agenda');
 
     try {
-      // 1. Verifica se a palestra já está na agenda para evitar processamento desnecessário
       final jaExiste = await agendaRef.doc(palestra.id).get();
       if (jaExiste.exists && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -31,16 +29,14 @@ class DetalhesPalestraPage extends StatelessWidget {
         return;
       }
 
-      // 2. Verifica Conflito de Horário (Requisito 3.1.3 - Restrição de Horário Robusta)
-      // Buscamos toda a agenda para comparar horários de forma flexível (ignorando segundos)
       final todasAsPalestras = await agendaRef.get();
       final novaData = (palestra['horario'] as Timestamp).toDate();
 
       for (var doc in todasAsPalestras.docs) {
         final dataExistente = (doc['horario'] as Timestamp).toDate();
 
-        // Compara se o dia e o horário (hora/minuto) são idênticos
-        bool mesmoDiaEHorario = dataExistente.year == novaData.year &&
+        bool mesmoDiaEHorario =
+            dataExistente.year == novaData.year &&
             dataExistente.month == novaData.month &&
             dataExistente.day == novaData.day &&
             dataExistente.hour == novaData.hour &&
@@ -59,11 +55,10 @@ class DetalhesPalestraPage extends StatelessWidget {
               duration: const Duration(seconds: 4),
             ),
           );
-          return; // Interrompe o cadastro
+          return;
         }
       }
 
-      // 3. Gravação na Subcoleção 'agenda' [cite: 545, 721]
       await agendaRef.doc(palestra.id).set({
         'idPalestra': palestra.id,
         'titulo': palestra['titulo'],
@@ -78,8 +73,7 @@ class DetalhesPalestraPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text("Agenda atualizada!"),
-            backgroundColor:
-                colorScheme.tertiary, // Verde sucesso institucional
+            backgroundColor: colorScheme.tertiary,
           ),
         );
       }
@@ -152,7 +146,6 @@ class DetalhesPalestraPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // BOTÃO DE AÇÃO [cite: 134, 409, 640]
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -163,7 +156,6 @@ class DetalhesPalestraPage extends StatelessWidget {
               ),
             ),
 
-            // NOVA SEÇÃO: PERGUNTAS E RESPOSTAS
             SecaoPerguntas(palestraId: palestra.id),
           ],
         ),
@@ -200,7 +192,6 @@ class DetalhesPalestraPage extends StatelessWidget {
   }
 }
 
-// Widget para gerenciar a interação de Perguntas [cite: 132, 400-405]
 class SecaoPerguntas extends StatefulWidget {
   final String palestraId;
 
@@ -224,11 +215,11 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
         .doc(widget.palestraId)
         .collection('perguntas')
         .add({
-      'texto': texto,
-      'autor': user?.displayName ?? "Estudante",
-      'uidAutor': _uid,
-      'horario': FieldValue.serverTimestamp(),
-    });
+          'texto': texto,
+          'autor': user?.displayName ?? "Estudante",
+          'uidAutor': _uid,
+          'horario': FieldValue.serverTimestamp(),
+        });
 
     _controller.clear();
     if (mounted) {
@@ -243,7 +234,10 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('usuarios').doc(_uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(_uid)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const SizedBox();
         final role = snapshot.data?.get('role') ?? 'aluno';
@@ -259,15 +253,14 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
                 Text(
                   "Perguntas e Respostas",
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
 
-            // Interface do ALUNO: Campo para perguntar
             if (role == 'aluno') ...[
               TextField(
                 controller: _controller,
@@ -289,9 +282,10 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
               const SizedBox(height: 32),
             ],
 
-            // Lista de Perguntas (Exibição Dinâmica)
             Text(
-              role == 'palestrante' ? "Perguntas Recebidas" : "Minhas Perguntas",
+              role == 'palestrante'
+                  ? "Perguntas Recebidas"
+                  : "Minhas Perguntas",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -309,8 +303,7 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
                 }
 
                 final perguntas = qSnapshot.data?.docs ?? [];
-                
-                // Filtra perguntas: Aluno só vê as suas, Palestrante vê todas
+
                 final listaFiltrada = perguntas.where((p) {
                   if (role == 'palestrante') return true;
                   return p['uidAutor'] == _uid;
@@ -319,7 +312,10 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
                 if (listaFiltrada.isEmpty) {
                   return Text(
                     "Nenhuma pergunta enviada ainda.",
-                    style: TextStyle(color: colorScheme.outline, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      color: colorScheme.outline,
+                      fontStyle: FontStyle.italic,
+                    ),
                   );
                 }
 

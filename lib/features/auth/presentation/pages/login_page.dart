@@ -7,7 +7,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Acesso dinâmico ao tema para garantir consistência visual (Requisito 3.11)
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -19,41 +18,30 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 80),
-              
-              // Logo institucional do ICEA/UFOP (Requisito 3.12 / Padrões de Interface)
-              Image.asset(
-                'assets/images/logo_icea.png', 
-                height: 120,
-              ),
-              
+              Image.asset('assets/images/logo_icea.png', height: 120),
+
               const SizedBox(height: 16),
-              
+
               Text(
                 "Semana da Computação",
                 style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.primary, // Aplica o Vinho oficial
+                  color: colorScheme.primary,
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 "Entre para gerenciar sua agenda e fazer check-in",
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.secondary, // Aplica o Cinza oficial
+                  color: colorScheme.secondary,
                 ),
               ),
-              
               const SizedBox(height: 40),
-
-              // Widget de formulário desacoplado (Seguindo a estrutura da EAP)
               const LoginForm(),
-              
               const SizedBox(height: 16),
-
-              // Navegação para cadastro usando as cores do tema
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -66,7 +54,7 @@ class LoginPage extends StatelessWidget {
                 child: Text(
                   "Não tem uma conta? Cadastre-se aqui",
                   style: TextStyle(
-                    color: colorScheme.primary, // Herda o Vinho automaticamente
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

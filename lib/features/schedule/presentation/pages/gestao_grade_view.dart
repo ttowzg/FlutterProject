@@ -38,12 +38,14 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
   }
 
   Future<void> _salvarPalestra() async {
-    if (!_formKey.currentState!.validate() || 
-        _dataSelecionada == null || 
-        _horaSelecionada == null || 
+    if (!_formKey.currentState!.validate() ||
+        _dataSelecionada == null ||
+        _horaSelecionada == null ||
         _uidPalestranteSelecionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Preencha todos os campos e selecione o palestrante.")),
+        const SnackBar(
+          content: Text("Preencha todos os campos e selecione o palestrante."),
+        ),
       );
       return;
     }
@@ -57,7 +59,6 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
     );
 
     try {
-      // 1. Cria a palestra
       await FirebaseFirestore.instance.collection('palestras').add({
         'titulo': _tituloController.text,
         'local': _localController.text,
@@ -67,7 +68,6 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
         'uidPalestrante': _uidPalestranteSelecionado,
       });
 
-      // 2. Atualiza o papel do usuário para palestrante
       await FirebaseFirestore.instance
           .collection('usuarios')
           .doc(_uidPalestranteSelecionado)
@@ -76,11 +76,16 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Palestra criada e palestrante designado!")),
+          const SnackBar(
+            content: Text("Palestra criada e palestrante designado!"),
+          ),
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erro: $e")));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Erro: $e")));
     }
   }
 
@@ -92,7 +97,9 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
         builder: (context, setModalState) => Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20, right: 20, top: 20,
+            left: 20,
+            right: 20,
+            top: 20,
           ),
           child: SingleChildScrollView(
             child: Form(
@@ -100,11 +107,26 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text("Nova Palestra", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Nova Palestra",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 16),
-                  TextFormField(controller: _tituloController, decoration: const InputDecoration(labelText: "Título")),
-                  TextFormField(controller: _localController, decoration: const InputDecoration(labelText: "Local")),
-                  TextFormField(controller: _resumoController, decoration: const InputDecoration(labelText: "Resumo/Descrição"), maxLines: 3),
+                  TextFormField(
+                    controller: _tituloController,
+                    decoration: const InputDecoration(labelText: "Título"),
+                  ),
+                  TextFormField(
+                    controller: _localController,
+                    decoration: const InputDecoration(labelText: "Local"),
+                  ),
+                  TextFormField(
+                    controller: _resumoController,
+                    decoration: const InputDecoration(
+                      labelText: "Resumo/Descrição",
+                    ),
+                    maxLines: 3,
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -115,7 +137,13 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
                             setModalState(() {});
                           },
                           icon: const Icon(Icons.calendar_today),
-                          label: Text(_dataSelecionada == null ? "Data" : DateFormat('dd/MM/yy').format(_dataSelecionada!)),
+                          label: Text(
+                            _dataSelecionada == null
+                                ? "Data"
+                                : DateFormat(
+                                    'dd/MM/yy',
+                                  ).format(_dataSelecionada!),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -126,17 +154,27 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
                             setModalState(() {});
                           },
                           icon: const Icon(Icons.access_time),
-                          label: Text(_horaSelecionada == null ? "Hora" : _horaSelecionada!.format(context)),
+                          label: Text(
+                            _horaSelecionada == null
+                                ? "Hora"
+                                : _horaSelecionada!.format(context),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Text("Selecionar Palestrante:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Selecionar Palestrante:",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('usuarios').snapshots(),
+                    stream: FirebaseFirestore.instance
+                        .collection('usuarios')
+                        .snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) return const CircularProgressIndicator();
+                      if (!snapshot.hasData)
+                        return const CircularProgressIndicator();
                       var users = snapshot.data!.docs;
                       return DropdownButtonFormField<String>(
                         value: _uidPalestranteSelecionado,
@@ -153,14 +191,18 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
                             _nomePalestranteSelecionado = userDoc['nome'];
                           });
                         },
-                        decoration: const InputDecoration(hintText: "Escolha um usuário"),
+                        decoration: const InputDecoration(
+                          hintText: "Escolha um usuário",
+                        ),
                       );
                     },
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _salvarPalestra,
-                    style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
                     child: const Text("CRIAR PALESTRA"),
                   ),
                   const SizedBox(height: 20),
@@ -177,9 +219,13 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('palestras').orderBy('horario').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('palestras')
+            .orderBy('horario')
+            .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData)
+            return const Center(child: CircularProgressIndicator());
           var palestras = snapshot.data!.docs;
           return ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -189,10 +235,15 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
               return Card(
                 child: ListTile(
                   title: Text(p['titulo']),
-                  subtitle: Text("${p['palestrante']} - ${DateFormat('dd/MM HH:mm').format(p['horario'].toDate())}"),
+                  subtitle: Text(
+                    "${p['palestrante']} - ${DateFormat('dd/MM HH:mm').format(p['horario'].toDate())}",
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => FirebaseFirestore.instance.collection('palestras').doc(p.id).delete(),
+                    onPressed: () => FirebaseFirestore.instance
+                        .collection('palestras')
+                        .doc(p.id)
+                        .delete(),
                   ),
                 ),
               );

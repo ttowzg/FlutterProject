@@ -16,7 +16,6 @@ class _CheckInViewState extends State<CheckInView> {
 
   Future<void> _realizarCheckIn() async {
     final user = FirebaseAuth.instance.currentUser;
-    // Adicionadas chaves no if para seguir o padrão de qualidade
     if (user == null || _palestraSelecionadaId == null) {
       return;
     }
@@ -31,11 +30,11 @@ class _CheckInViewState extends State<CheckInView> {
           .get();
 
       if (docPalestra['codigo'] == _codigoController.text.trim()) {
-        // Registro da presença [cite: 124-126]
         await FirebaseFirestore.instance.collection('presencas').add({
           'userId': user.uid,
           'palestraId': _palestraSelecionadaId,
-          'dataHora': FieldValue.serverTimestamp(), // Garante sincronização offline [cite: 163, 626]
+          'dataHora':
+              FieldValue.serverTimestamp(), // Garante sincronização offline
           'titulo': docPalestra['titulo'],
         });
 
@@ -122,7 +121,7 @@ class _CheckInViewState extends State<CheckInView> {
           ElevatedButton(
             onPressed: _isProcessando ? null : _realizarCheckIn,
             style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50), // Sua correção aplicada 
+              minimumSize: const Size.fromHeight(50),
             ),
             child: _isProcessando
                 ? const SizedBox(

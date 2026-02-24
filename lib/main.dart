@@ -22,20 +22,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Semana da Computação - ICEA',
       theme: AppTheme.lightTheme,
-      // O segredo está aqui: o StreamBuilder decide qual ecrã mostrar
       home: StreamBuilder<User?>(
         stream: AuthService().userStatus,
         builder: (context, snapshot) {
-          // Se snapshot tem dados, o utilizador está logado
           if (snapshot.hasData) {
             return const HomePage();
           }
-          // Se não, volta para o login
           return const LoginPage();
         },
       ),
     );
   }
 }
-
-

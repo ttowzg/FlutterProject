@@ -6,16 +6,11 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Buscamos o esquema de cores do tema que você configurou no main.dart
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      // O AppBar usará automaticamente a cor primária (Vinho) ou o tema definido
-      appBar: AppBar(
-        title: const Text("Criar Conta"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Criar Conta"), centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -23,25 +18,21 @@ class RegisterPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              // REMOVIDO 'const' aqui para permitir o uso de colorScheme
               Icon(
                 Icons.person_add_alt_1,
                 size: 80,
-                color: colorScheme.primary, // Aplica o Vinho da UFOP
+                color: colorScheme.primary,
               ),
               const SizedBox(height: 24),
               Text(
                 "Cadastre-se para participar das atividades",
                 textAlign: TextAlign.center,
                 style: textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.secondary, // Aplica o Cinza oficial
+                  color: colorScheme.secondary,
                 ),
               ),
               const SizedBox(height: 40),
-              
-              // Widget do formulário que você já criou
               const RegisterForm(),
-              
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.pop(context),

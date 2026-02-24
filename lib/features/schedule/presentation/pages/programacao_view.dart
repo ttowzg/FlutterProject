@@ -12,7 +12,6 @@ class ProgramacaoView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return StreamBuilder<QuerySnapshot>(
-      // Apontando para a coleção 'palestras' conforme alinhamos
       stream: FirebaseFirestore.instance
           .collection('palestras')
           .orderBy('horario')
@@ -85,7 +84,6 @@ class ProgramacaoView extends StatelessWidget {
                           color: colorScheme.primary,
                         ),
                         const SizedBox(width: 4),
-                        // Exibe: 24/02/2026
                         Text(
                           DateFormat(
                             'dd/MM/yyyy',
@@ -98,7 +96,6 @@ class ProgramacaoView extends StatelessWidget {
                           color: colorScheme.primary,
                         ),
                         const SizedBox(width: 4),
-                        // Exibe: 19:00h
                         Text(
                           "${DateFormat('HH:mm').format(palestra['horario'].toDate())}h",
                         ),

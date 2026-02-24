@@ -13,7 +13,6 @@ class PainelPerguntasView extends StatelessWidget {
 
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        // Busca apenas palestras onde o usuário atual é o palestrante
         stream: FirebaseFirestore.instance
             .collection('palestras')
             .where('uidPalestrante', isEqualTo: uid)
@@ -56,7 +55,8 @@ class PainelPerguntasView extends StatelessWidget {
                       Expanded(
                         child: Text(
                           p['titulo'],
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -70,8 +70,7 @@ class PainelPerguntasView extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  
-                  // Sub-lista de perguntas para esta palestra
+
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('palestras')
@@ -80,14 +79,17 @@ class PainelPerguntasView extends StatelessWidget {
                         .orderBy('horario', descending: true)
                         .snapshots(),
                     builder: (context, qSnapshot) {
-                      if (!qSnapshot.hasData) return const LinearProgressIndicator();
+                      if (!qSnapshot.hasData)
+                        return const LinearProgressIndicator();
 
                       final perguntas = qSnapshot.data!.docs;
                       if (perguntas.isEmpty) {
                         return const Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Text("Nenhuma pergunta para esta palestra ainda.", 
-                                      style: TextStyle(fontStyle: FontStyle.italic)),
+                          child: Text(
+                            "Nenhuma pergunta para esta palestra ainda.",
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
                         );
                       }
 
@@ -97,8 +99,9 @@ class PainelPerguntasView extends StatelessWidget {
                         itemCount: perguntas.length,
                         itemBuilder: (context, pIndex) {
                           final pergunta = perguntas[pIndex];
-                          final data = (pergunta['horario'] as Timestamp?)?.toDate();
-                          
+                          final data = (pergunta['horario'] as Timestamp?)
+                              ?.toDate();
+
                           return Card(
                             elevation: 0,
                             color: colorScheme.surfaceVariant.withOpacity(0.3),
@@ -109,8 +112,11 @@ class PainelPerguntasView extends StatelessWidget {
                                 "Enviado por: ${pergunta['autor']} • ${data != null ? DateFormat('HH:mm').format(data) : ''}",
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              trailing: Icon(Icons.mark_chat_unread, 
-                                            size: 16, color: colorScheme.secondary),
+                              trailing: Icon(
+                                Icons.mark_chat_unread,
+                                size: 16,
+                                color: colorScheme.secondary,
+                              ),
                             ),
                           );
                         },
