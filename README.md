@@ -18,7 +18,7 @@ Com base na Especificação de Requisitos, a aplicação entrega:
 * **Programação em Tempo Real**: Grade completa de atividades sincronizada via Firebase, permitindo atualizações instantâneas de horários e locais.
 * **Agenda Personalizada**: Permite que o participante organize o seu próprio cronograma e evite conflitos de horário entre palestras e oficinas.
 * **Interação Q&A**: Painel direto para envio de perguntas por texto aos palestrantes durante as sessões, facilitando a participação do público.
-* **Módulo de Feedback**: Coleta de avaliações (1 a 5 estrelas) e comentários qualitativos após a conclusão das atividades.
+
 
 ## Tecnologias Utilizadas
 
@@ -45,6 +45,17 @@ Com base na Especificação de Requisitos, a aplicação entrega:
 
 4.  **Configurar Firebase**:
     * Adicionar o arquivo `google-services.json` na pasta `android/app/`.
+    * Como este projeto depende do Firebase, você precisa baixar as credenciais da sua própria instância do console:
+        * Acesse o Firebase Console.
+        * Crie um novo projeto.
+        * No painel lateral, clique na Engrenagem (Configurações do Projeto) > Geral.
+        * Em Seus aplicativos, clique no ícone do Android para registrar o app:
+        * Nome do pacote Android: com.example.app_semana_computacao.
+        * Clique em Registrar app.
+        * Na etapa 2, clique no botão Fazer download do google-services.json.
+        * Importante: Mova o arquivo baixado para a pasta: android/app/.
+        * O caminho final deve ser: seu_projeto/android/app/google-services.json.
+        * Você pode pular as etapas seguintes do console (Adicionar SDK), pois as dependências já estão configuradas no código.
 
 5.  **Executar a aplicação**:
     ```bash
