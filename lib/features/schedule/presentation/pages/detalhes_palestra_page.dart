@@ -94,6 +94,7 @@ class DetalhesPalestraPage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final DateTime dataHora = (palestra['horario'] as Timestamp).toDate();
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Detalhes")),
@@ -146,14 +147,28 @@ class DetalhesPalestraPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: () => _gerenciarAgenda(context),
-                icon: const Icon(Icons.bookmark_add),
-                label: const Text("ADICIONAR À MINHA AGENDA"),
-              ),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('usuarios')
+                  .doc(uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const SizedBox();
+                final role = snapshot.data?.get('role') ?? 'aluno';
+
+                if (role == 'aluno') {
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _gerenciarAgenda(context),
+                      icon: const Icon(Icons.bookmark_add),
+                      label: const Text("ADICIONAR À MINHA AGENDA"),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
             ),
 
             SecaoPerguntas(palestraId: palestra.id),
@@ -260,7 +275,6 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
               ],
             ),
             const SizedBox(height: 24),
-
             if (role == 'aluno') ...[
               TextField(
                 controller: _controller,
@@ -281,7 +295,6 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
               ),
               const SizedBox(height: 32),
             ],
-
             Text(
               role == 'palestrante'
                   ? "Perguntas Recebidas"
@@ -289,7 +302,6 @@ class _SecaoPerguntasState extends State<SecaoPerguntas> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('palestras')

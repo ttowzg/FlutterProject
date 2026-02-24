@@ -65,6 +65,44 @@ class PainelPerguntasView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
+
+                  Card(
+                    color: colorScheme.primaryContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "CÓDIGO DE PRESENÇA",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                              const Text(
+                                "Divulgue este código ao fim da palestra",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            p['codigo'] ?? "---",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
                   const Text(
                     "Perguntas Recebidas:",
                     style: TextStyle(fontWeight: FontWeight.bold),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'lista_presencas.dart';
 
 class GestaoGradeView extends StatefulWidget {
   const GestaoGradeView({super.key});
@@ -14,6 +15,8 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
   final _tituloController = TextEditingController();
   final _localController = TextEditingController();
   final _resumoController = TextEditingController();
+  final _codigoController = TextEditingController();
+
   DateTime? _dataSelecionada;
   TimeOfDay? _horaSelecionada;
   String? _uidPalestranteSelecionado;
@@ -41,10 +44,11 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
     if (!_formKey.currentState!.validate() ||
         _dataSelecionada == null ||
         _horaSelecionada == null ||
+        _codigoController.text.isEmpty ||
         _uidPalestranteSelecionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Preencha todos os campos e selecione o palestrante."),
+          content: Text("Preencha todos os campos, incluindo o código."),
         ),
       );
       return;
@@ -66,6 +70,7 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
         'horario': Timestamp.fromDate(horarioCompleto),
         'palestrante': _nomePalestranteSelecionado,
         'uidPalestrante': _uidPalestranteSelecionado,
+        'codigo': _codigoController.text.trim().toUpperCase(),
       });
 
       await FirebaseFirestore.instance
@@ -76,10 +81,12 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Palestra criada e palestrante designado!"),
-          ),
+          const SnackBar(content: Text("Palestra criada com sucesso!")),
         );
+        _tituloController.clear();
+        _localController.clear();
+        _resumoController.clear();
+        _codigoController.clear();
       }
     } catch (e) {
       if (mounted)
@@ -122,10 +129,16 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
                   ),
                   TextFormField(
                     controller: _resumoController,
+                    decoration: const InputDecoration(labelText: "Resumo"),
+                    maxLines: 2,
+                  ),
+                  TextFormField(
+                    controller: _codigoController,
                     decoration: const InputDecoration(
-                      labelText: "Resumo/Descrição",
+                      labelText: "Código para Check-in (ex: COMP2026)",
+                      prefixIcon: Icon(Icons.vpn_key),
                     ),
-                    maxLines: 3,
+                    textCapitalization: TextCapitalization.characters,
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -178,12 +191,14 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
                       var users = snapshot.data!.docs;
                       return DropdownButtonFormField<String>(
                         value: _uidPalestranteSelecionado,
-                        items: users.map((u) {
-                          return DropdownMenuItem(
-                            value: u.id,
-                            child: Text(u['nome'] ?? 'Sem nome'),
-                          );
-                        }).toList(),
+                        items: users
+                            .map(
+                              (u) => DropdownMenuItem(
+                                value: u.id,
+                                child: Text(u['nome'] ?? 'Sem nome'),
+                              ),
+                            )
+                            .toList(),
                         onChanged: (val) {
                           var userDoc = users.firstWhere((u) => u.id == val);
                           setModalState(() {
@@ -234,6 +249,17 @@ class _GestaoGradeViewState extends State<GestaoGradeView> {
               var p = palestras[index];
               return Card(
                 child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ListaPresencasPage(
+                          palestraId: p.id,
+                          tituloPalestra: p['titulo'],
+                        ),
+                      ),
+                    );
+                  },
                   title: Text(p['titulo']),
                   subtitle: Text(
                     "${p['palestrante']} - ${DateFormat('dd/MM HH:mm').format(p['horario'].toDate())}",

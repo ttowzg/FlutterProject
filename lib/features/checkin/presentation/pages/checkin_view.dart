@@ -16,9 +16,7 @@ class _CheckInViewState extends State<CheckInView> {
 
   Future<void> _realizarCheckIn() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null || _palestraSelecionadaId == null) {
-      return;
-    }
+    if (user == null || _palestraSelecionadaId == null) return;
 
     setState(() => _isProcessando = true);
     final colorScheme = Theme.of(context).colorScheme;
@@ -30,18 +28,25 @@ class _CheckInViewState extends State<CheckInView> {
           .get();
 
       if (docPalestra['codigo'] == _codigoController.text.trim()) {
+        final docUsuario = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(user.uid)
+            .get();
+
+        final nomeDoAluno = docUsuario.data()?['nome'] ?? "Aluno sem nome";
+
         await FirebaseFirestore.instance.collection('presencas').add({
           'userId': user.uid,
+          'nomeAluno': nomeDoAluno,
           'palestraId': _palestraSelecionadaId,
-          'dataHora':
-              FieldValue.serverTimestamp(), // Garante sincronização offline
+          'dataHora': FieldValue.serverTimestamp(),
           'titulo': docPalestra['titulo'],
         });
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text("Check-in realizado com sucesso!"),
+              content: const Text("Presença confirmada!"),
               backgroundColor: colorScheme.tertiary,
             ),
           );
@@ -51,18 +56,16 @@ class _CheckInViewState extends State<CheckInView> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text("Código incorreto. Tente novamente."),
+              content: const Text("Código incorreto!"),
               backgroundColor: colorScheme.error,
             ),
           );
         }
       }
     } catch (e) {
-      debugPrint("Erro no check-in: $e");
+      debugPrint("Erro ao realizar check-in: $e");
     } finally {
-      if (mounted) {
-        setState(() => _isProcessando = false);
-      }
+      if (mounted) setState(() => _isProcessando = false);
     }
   }
 

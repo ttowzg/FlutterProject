@@ -6,7 +6,7 @@ import '../../../schedule/presentation/pages/programacao_view.dart';
 import '../../../profile/presentation/pages/profile_view.dart';
 import '../../../schedule/presentation/pages/agenda_view.dart';
 import '../../../checkin/presentation/pages/checkin_view.dart';
-import '../../../schedule/presentation/pages/gestao_grade_view.dart';
+import '../../../management/presentation/pages/gestao_grade_view.dart';
 import '../../../speakers/presentation/pages/painel_perguntas_view.dart';
 
 class HomePage extends StatefulWidget {
