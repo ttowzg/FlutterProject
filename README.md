@@ -62,13 +62,14 @@ Com base na Especificação de Requisitos, a aplicação entrega:
     flutter run
     ```
 
-## Qualidade e Métricas (GQM)
+## Link de download do apk:
+Necessário acessar com email institucional da ufop
 
-O projeto segue metas rigorosas de desempenho e usabilidade, fundamentadas no modelo **Goal-Question-Metric**:
+ ```bash
+ https://drive.google.com/file/d/1vZLBdKPDJoWSTr_IHIe3V7va3L7zOXpS/view?usp=sharing
+ ```
 
-* **Responsividade**: Tempo de transição entre telas de até 1 segundo.
-* **Eficiência**: Carregamento da programação completa e dados externos em até 5 segundos.
-* **Confiabilidade**: Garantia de 100% de integridade na sincronização de dados de check-in realizados em modo offline.
+
 
 ---
 *Projeto desenvolvido para a disciplina de Gerência de Projetos de Software (CSI405)*
